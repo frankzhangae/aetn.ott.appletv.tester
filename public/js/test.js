@@ -28,42 +28,43 @@ for (brand in brands) {
 			api_test(url, t);
 		});
 		// shows
-		QUnit.module('Shows', () => {
-			$.ajax({
-				url: 'http://' + thisEnv + feedsUrl + brand + '/showssort?filter[isSuppressFromWA]=false&perpage=500&fields[]=id',
-				type: 'GET',
-				async: false,
-				complete: function(xhr) {
-					let shows = xhr.responseJSON.results;
-					for(let i = 0; i < shows.length; i++) {
-						let show = shows[i];
+		$.ajax({
+			url: 'http://' + thisEnv + feedsUrl + brand + '/showssort?filter[isSuppressFromWA]=false&perpage=500&fields[]=id',
+			type: 'GET',
+			async: false,
+			complete: function(xhr) {
+				let shows = xhr.responseJSON.results;
+				for(let i = 0; i < shows.length; i++) {
+					let show = shows[i];
+					QUnit.module(show.title_mod, () => {
 						// some shows don't have videos, will not be shown in real app
-						test(show.title_mod, t => {
+						test('Show', t => {
 							let url = baseUrl + '/show/' + show.id + '/default';
 							api_test(url, t);
 						});
 						// videos
-						QUnit.module('Videos', () => {
-							$.ajax({
-								url: 'http://' + thisEnv + feedsUrl + brand + '/shows/' + show.id + '/videos?perpage=100&orderby=originalAirDate&sort=desc&fields[]=id&fields[]=title',
-								type: 'GET',
-								async: false,
-								complete: function(xhr) {
-									let videos = xhr.responseJSON.results;
-									for(let j = 0; j < videos.length; j++) {
-										let video = videos[j];
-										test(video.title, t => {
+						$.ajax({
+							url: 'http://' + thisEnv + feedsUrl + brand + '/shows/' + show.id + '/videos?perpage=100&orderby=originalAirDate&sort=desc&fields[]=id&fields[]=title&fields[]=tvSeasonNumber&fields[]=tvSeasonEpisodeNumber&fields[]=isLongForm',
+							type: 'GET',
+							async: false,
+							complete: function(xhr) {
+								let videos = xhr.responseJSON.results;
+								for(let j = 0; j < videos.length; j++) {
+									let video = videos[j],isLongForm
+										videoTitle = 'S' + video.tvSeasonNumber + 'E' + video.tvSeasonEpisodeNumber + ' ' + video.title + (video.isLongForm ? ' (LF)' : ' (SF)');
+									QUnit.module(videoTitle, () => {
+										test('Video', t => {
 											let url = baseUrl + '/video/' + video.id;
 											api_test(url, t);
 										});
-									}
+									});
 								}
-							})
+							}
 						});
-					}
+					});
 				}
-			});	
-		});
+			}
+		});	
 	});
 
 };
