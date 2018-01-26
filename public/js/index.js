@@ -129,7 +129,11 @@ $(document).ready(() => {
 		//$('#thingsToHideAfterTestStarts').hide();
 		// use requirejs instead
 		//QUnit.start();
-		pageTest(config);
+		if(config.brands.length > 0){
+			pageTest(config);
+		} else {
+			alert('please check at least 1 brand');
+		}
 	});
 });
 
@@ -169,7 +173,7 @@ var pageTest = (function() {
 		QUnit.start();
 		$('#thingsToHideAfterTestStarts').hide();
 		brandsToTest.forEach(function(brand) {
-			let thisBrand = brands[brand],
+			let thisBrand = brand,
 				baseUrl = 'http://' + appEnv + domain + '/' + thisBrand;
 			// home screen
 			if(testLevel > 0) {
@@ -235,7 +239,7 @@ function api_test(url, assert) {
         if (result.status == 200) {
           assert.ok(true, 'Passed');
         } else {
-          assert.ok(false, 'Falied');
+          assert.ok(false, 'Falied ' + url);
         }
       }
     });
