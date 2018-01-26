@@ -161,20 +161,16 @@ var pageTest = (function() {
 		// settings according to configs being passed in 
 		let appEnv = env[configs.appEnv],
 			feedsEnv = env[configs.feedsEnv],
-			brandsToTest = [];
-		configs.brands.forEach(function(brand) {
-			brandsToTest.push(brands[brand]);
-		})
-		testLevel = configs.testPages.length;
+			brandsToTest = [],
+			testLevel = configs.testPages.length;
 
 
 
 		// test start!!!!!!!
 		QUnit.start();
 		$('#thingsToHideAfterTestStarts').hide();
-		brandsToTest.forEach(function(brand) {
-			let thisBrand = brand,
-				baseUrl = 'http://' + appEnv + domain + '/' + thisBrand;
+		configs.brands.forEach(function(brand) {
+			let	baseUrl = 'http://' + appEnv + domain + '/' + brands[brand];
 			// home screen
 			if(testLevel > 0) {
 				QUnit.module(brand, () => {	
