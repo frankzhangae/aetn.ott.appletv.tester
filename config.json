@@ -1,0 +1,39 @@
+{
+	"mvpd": [
+		"hulu",
+		"flexibletemppass"
+	],
+	"routes": [
+		{
+			"name": "bag plist",
+			"type": "xml",
+			"requirement": "none",
+			"mvpd": false,
+			"url": "bag.plist"
+		},
+		{
+			"name": "navigator with create profile",
+			"type": "xml",
+			"requirement": "identical",
+			"mvpd": false,
+			"url": "nav"
+		},
+		{
+			"name": "navigator with your profile",
+			"type": "xml",
+			"requirement": "none",
+			"mvpd": false,
+			"url": "nav/logout"
+		},
+		{
+			"name": "home page",
+			"type": "xml",
+			"requirement": "none",
+			"mvpd": true,
+			"url": "section/shows"
+		}
+	]
+}
+
+
+
