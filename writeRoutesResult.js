@@ -1,8 +1,10 @@
 // config 
-const brands = ['history'];
+const brands = ['mlt'];
 //const brands = ['mlt', 'history', 'fyi', 'ae'];
-const config = require('./config.json');
-//const config = require('./config-test.json');
+const configs = {
+	"mlt": require('./config/config-mlt.json')
+};
+//const configs = {'history': require('./config/config-test.json')};
 
 // lib
 String.prototype.replaceAll = function(search, replacement) {
@@ -26,8 +28,6 @@ colors.setTheme({
 	debug: 'blue',
 	error: 'red'
 });
-const allRoutes = config["all-routes"];
-const mvpds = config.mvpd;
 const _ = require('underscore');
 /* 
  * main()
@@ -49,36 +49,44 @@ async function main() {
 	console.log('---------------------- Start Testing ---------------');
 	console.log();
 
-	for(brandKey in brands) {
-		let brand = brands[brandKey];
+	brands.forEach(brand => {
 		let pendingHyphens = new Array(29 - brand.length).join('-');
 		console.log("--------------- Brand:",  colors[brand](brand), pendingHyphens);
 
 		const baseUrl = 'http://' + env + '-appletv.aetndigital.com/' + brand;
 		const prodBaseUrl = 'http://appletv.aetndigital.com/' + brand;
+		
+		let config = configs[brand];
 
-		for(allRoutesKey in allRoutes) {
-			let category = allRoutes[allRoutesKey];
-			console.log("Category", colors.category(category.name));
+		let allRoutes = config["all-routes"];
+		let mvpds = config.mvpd;
+		
+		testAllRoutes(allRoutes, mvpds, baseUrl, prodBaseUrl);	
+	});
+}
 
-			await testGroup(category, baseUrl, prodBaseUrl);
-		}
+async function testAllRoutes(allRoutes, mvpds, baseUrl, prodBaseUrl) {
+	for(allRoutesKey in allRoutes) {
+		let category = allRoutes[allRoutesKey];
+		console.log("Category", colors.category(category.name));
+
+		await testGroup(category, mvpds, baseUrl, prodBaseUrl);
 	}
 }
  
-async function testGroup(category, baseUrl, prodBaseUrl) {
+async function testGroup(category, mvpds, baseUrl, prodBaseUrl) {
 	//console.log("testGroup");
 
 	for(key in category.routes) {
 		let task = category.routes[key];
 
-		let result = await testEachTask(task, baseUrl, prodBaseUrl);
+		let result = await testEachTask(task, mvpds, baseUrl, prodBaseUrl);
 
 		console.log(colors[result](result), task.name);
 	}
 }
 
-async function testEachTask(task, baseUrl, prodBaseUrl) {
+async function testEachTask(task, mvpds, baseUrl, prodBaseUrl) {
 	//console.log("testEachTask");
 
 	for(key in task.urls) {

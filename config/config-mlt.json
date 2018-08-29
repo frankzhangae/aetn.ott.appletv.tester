@@ -33,7 +33,6 @@
 					"name": "movie page",
 					"type": "xml",
 					"mvpd": true,
-					"brands": ["mlt"],
 					"urls": ["/section/movies"]
 				}
 				
@@ -226,17 +225,7 @@
 					"name": "show landing page",
 					"type": "xml",
 					"urls": ["/topShelf"]
-				},
-				{
-					"name": "tvos update",
-					"type": "xml",
-					"urls": [
-						"/update/device",
-						"/update/app",
-						"/update/force/device",
-						"/update/force/app"
-					]
-				}	
+				}
 			]
 		},
 		{
