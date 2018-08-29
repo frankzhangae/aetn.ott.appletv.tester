@@ -1,0 +1,23 @@
+{
+	"mvpd": [
+		"/hulu",
+		"/flexibleTempPass",
+		""
+	],
+	"all-routes": [
+		{
+			"name": "Main Pages",
+			"routes": [
+				{
+					"name": "bag plist",
+					"type": "xml",
+					"mvpd": false,
+					"urls": ["/bag.plist"]
+				}
+			]
+		}
+	]
+}
+
+
+

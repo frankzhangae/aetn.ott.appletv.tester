@@ -1,18 +1,34 @@
-// import
+// config 
+const brands = ['history'];
+//const brands = ['mlt', 'history', 'fyi', 'ae'];
+const config = require('./config.json');
+//const config = require('./config-test.json');
+
+// lib
+String.prototype.replaceAll = function(search, replacement) {
+    var target = this;
+    return target.split(search).join(replacement);
+};
+
 const request = require('request');
 const colors = require('colors');
 //text colors: black red green yellow blue magenta cyan white gray grey
 colors.setTheme({
-	version: 'red',
+	category: 'yellow',
+	ae: 'blue',
+	fyi: 'green',
+	history: 'red',
+	mlt: 'magenta',
+	version: 'yellow',
 	info: 'cyan',
 	pass: 'green',
 	warn: 'yellow',
 	debug: 'blue',
 	error: 'red'
 });
-const config = require('./config.json');
-const routes = config.routes;
-const mvpd = config.mvpd;
+const allRoutes = config["all-routes"];
+const mvpds = config.mvpd;
+const _ = require('underscore');
 /* 
  * main()
  * node writeRoutesResult [laravel ver] [php version] [env] ...[brand]
@@ -24,35 +40,108 @@ const mvpd = config.mvpd;
 const laravelVer = process.argv[2];
 const phpVer = process.argv[3] || '5.6';
 const env = process.argv[4] || 'dev';
-const brands = ['ae'];
-//const brands = ['mlt', 'history', 'fyi', 'ae'];
 const timestamp = new Date().getTime();
+
+// use async and await to make sure the sequence
+async function main() {
+	console.log('---------------------- PARAMS ----------------------');
+	console.log('Laravel:', colors.version(laravelVer), 'PHP:', colors.version(phpVer), 'Env:', colors.version(env));
+	console.log('---------------------- Start Testing ---------------');
+	console.log();
+
+	for(brandKey in brands) {
+		let brand = brands[brandKey];
+		let pendingHyphens = new Array(29 - brand.length).join('-');
+		console.log("--------------- Brand:",  colors[brand](brand), pendingHyphens);
+
+		const baseUrl = 'http://' + env + '-appletv.aetndigital.com/' + brand;
+		const prodBaseUrl = 'http://appletv.aetndigital.com/' + brand;
+
+		for(allRoutesKey in allRoutes) {
+			let category = allRoutes[allRoutesKey];
+			console.log("Category", colors.category(category.name));
+
+			await testGroup(category, baseUrl, prodBaseUrl);
+		}
+	}
+}
+ 
+async function testGroup(category, baseUrl, prodBaseUrl) {
+	//console.log("testGroup");
+
+	for(key in category.routes) {
+		let task = category.routes[key];
+
+		let result = await testEachTask(task, baseUrl, prodBaseUrl);
+
+		console.log(colors[result](result), task.name);
+	}
+}
+
+async function testEachTask(task, baseUrl, prodBaseUrl) {
+	//console.log("testEachTask");
+
+	for(key in task.urls) {
+		let endpoint = task.urls[key];
+
+		if(task.mvpd) {
+			for(mvpdKey in mvpds) {
+				let slashMvpd = mvpds[mvpdKey];
+
+				let result = await testEachEndPoint(task.type, baseUrl + endpoint + slashMvpd, prodBaseUrl + endpoint + slashMvpd);
+
+				if(result != 'pass') {
+					return "error";
+				}
+			}
+		} else {
+			let result = await testEachEndPoint(task.type, baseUrl + endpoint, prodBaseUrl + endpoint);
+
+			if(result != 'pass') {
+				return "error";
+			}
+		}
+	}
+
+	return "pass";
+}
+
+function testEachEndPoint(type, url1, url2) {
+	return new Promise((resolve, reject) => {
+		request(url1, (error, res, body) => {
+			if(error || res.statusCode != 200) {
+				resolve("error");
+			} 
+			request(url2, (error2, res2, body2) => {
+				if(error2 || res2.statusCode != 200) {
+					resolve('error');
+				}
+				// deal with xml and make it the same as prod xml
+				body1 = body.replaceAll(env + '-', '').replaceAll('.' + env + '.', '').replaceAll('https', 'http');
+				body2 = body2.replaceAll('.prod.', '').replaceAll('https', 'http');
+
+				//console.log(body1);
+				//console.log(body2);
+
+				if(body1 == body2) {
+					resolve('pass');
+				}
+				resolve('error');
+			});
+		});
+	});
+}
+
+
 
 if(!laravelVer) {
 	console.error('no laravel version');
 	return;
 }
 
-console.log('PARAMS:'.info, 'laravel:', colors.version(laravelVer), 'php:', colors.version(phpVer), 'env:', colors.version(env));
+main(); 
 
-// make sure they all return 200
-brands.forEach(brand => {
-	const prodBaseUrl = 'http://' + env + '-appletv.aetndigital.com/' + brand + '/';
-	const compBaseUrl = 'http://appletv.aetndigital.com/' + brand + '/';
 
-	routes.forEach(route => {
-		let name = route.name;
-		let type = route.type;
-		let endpoint = route.url;
 
-		request(compBaseUrl + endpoint, (error, res, body) => {
-			if(error) {
-				console.log(colors.error(res.statusCode), env, brand, name);
-			} else {
-				console.log('Passed'.pass, brand, name);
-			}
-			
-		});
-	})
-	
-});
+
+

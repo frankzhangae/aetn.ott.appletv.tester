@@ -1,36 +1,269 @@
 {
 	"mvpd": [
-		"hulu",
-		"flexibletemppass"
+		"/hulu",
+		"/flexibleTempPass",
+		""
 	],
-	"routes": [
+	"all-routes": [
 		{
-			"name": "bag plist",
-			"type": "xml",
-			"requirement": "none",
-			"mvpd": false,
-			"url": "bag.plist"
+			"name": "Main Pages",
+			"routes": [
+				{
+					"name": "bag plist",
+					"type": "xml",
+					"mvpd": false,
+					"urls": ["/bag.plist"]
+				},
+				{
+					"name": "navigator with create profile",
+					"type": "xml",
+					"mvpd": false,
+					"urls": [
+						"/nav",
+						"/nav/logout"
+					]
+				},
+				{
+					"name": "home page",
+					"type": "xml",
+					"mvpd": true,
+					"urls": ["/section/shows"]
+				},
+				{
+					"name": "movie page",
+					"type": "xml",
+					"mvpd": true,
+					"brands": ["mlt"],
+					"urls": ["/section/movies"]
+				}
+				
+			]
 		},
 		{
-			"name": "navigator with create profile",
-			"type": "xml",
-			"requirement": "identical",
-			"mvpd": false,
-			"url": "nav"
+			"name": "Search",
+			"routes": [
+				{
+					"name": "search index page",
+					"type": "xml",
+					"mvpd": true,
+					"urls": ["/search"]
+				},
+				{
+					"name": "search result: all episodes",
+					"type": "xml",
+					"mvpd": false,
+					"queryStr": [
+						{"searchTerm": "l"}
+					],
+					"urls": ["/search-results"]
+				},
+				{
+					"name": "search result: unlocked episodes",
+					"type": "xml",
+					"mvpd": false,
+					"queryStr": [
+						{"searchTerm": "l"}
+					],
+					"urls": ["/search-results-free"]
+				}
+			]
 		},
 		{
-			"name": "navigator with your profile",
-			"type": "xml",
-			"requirement": "none",
-			"mvpd": false,
-			"url": "nav/logout"
+			"name": "Settings",
+			"routes": [
+				{
+					"name": "settings index page",
+					"type": "xml",
+					"mvpd": true,
+					"urls": ["/settings/index"]
+				},
+				{
+					"name": "settings about",
+					"type": "xml",
+					"mvpd": true,
+					"urls": ["/settings/about"]
+				},
+				{
+					"name": "settings faq",
+					"type": "xml",
+					"mvpd": true,
+					"urls": ["/settings/faq"]
+				},
+				{
+					"name": "settings privacy policy",
+					"type": "xml",
+					"mvpd": true,
+					"urls": ["/settings/privacy-policy"]
+				},
+				{
+					"name": "settings terms page",
+					"type": "xml",
+					"mvpd": true,
+					"urls": ["/settings/terms-conditions"]
+				},
+				{
+					"name": "settings ad choices",
+					"type": "xml",
+					"mvpd": true,
+					"urls": ["/settings/ad-choices"]
+				},
+				{
+					"name": "settings contact us",
+					"type": "xml",
+					"mvpd": true,
+					"urls": ["/settings/contact-us"]
+				}
+			]
 		},
 		{
-			"name": "home page",
-			"type": "xml",
-			"requirement": "none",
-			"mvpd": true,
-			"url": "section/shows"
+			"name": "TVE",
+			"routes": [
+				{
+					"name": "activate page",
+					"type": "xml",
+					"urls": [
+						"/tve/activate",
+						"/tve/activate/videoPlayer"
+					]
+				},
+				{
+					"name": "deactivate page",
+					"type": "xml",
+					"urls": ["/tve/deactivate"]
+				},
+				{
+					"name": "tve success page",
+					"type": "xml",
+					"mvpd": true,
+					"urls": ["/tve/success"]
+				},
+				{
+					"name": "tve fail page: code time out",
+					"type": "xml",
+					"urls": ["/tve/fail"]
+				}
+			]
+		},
+		{
+			"name": "TVE Temppass",
+			"routes": [
+				{
+					"name": "temp pass prompt",
+					"type": "xml",
+					"urls": [
+						"/tve/temppass/activate",
+						"/tve/temppass/activate/sso"
+					]
+				},
+				{
+					"name": "temp pass welcome dialog",
+					"type": "xml",
+					"urls": [
+						"/tve/temppass/welcome/3/0"						
+					]
+				},
+				{
+					"name": "temp pass fail dialog",
+					"type": "xml",
+					"urls": [
+						"/tve/temppass/fail/somethingwentwrong"					
+					]
+				},
+				{
+					"name": "temp pass video dialog",
+					"type": "xml",
+					"urls": [
+						"/tve/temppass/videoplayer/3/-1"					
+					]
+				}
+			]
+		},
+		{
+			"name": "AE SSO",
+			"routes": [
+				{
+					"name": "sso create profile page",
+					"type": "xml",
+					"urls": [
+						"/aesso/login/true/videoplayer",
+						"/aesso/login/true",
+						"/aesso/login/false/videoplayer",
+						"/aesso/login/false"
+					]
+				},
+				{
+					"name": "sso login success dialog",
+					"type": "xml",
+					"urls": ["/aesso/success"]
+				},
+				{
+					"name": "sso your profile page",
+					"type": "xml",
+					"urls": ["/aesso/logout/frank/3/0"]
+				},
+				{
+					"name": "sso logout confirm dialog",
+					"type": "xml",
+					"urls": ["/aesso/deactivate"]
+				},
+				{
+					"name": "sso error page",
+					"type": "xml",
+					"mvpd": true,
+					"urls": ["/aesso/error/tokenExpired"]
+				},
+				{
+					"name": "sso welcome dialog",
+					"type": "xml",
+					"urls": ["/aesso/welcome"]
+				}				
+			]
+		},
+		{
+			"name": "Show",
+			"routes": [
+				{
+					"name": "show landing page",
+					"type": "xml",
+					"urls": ["/topShelf"]
+				},
+				{
+					"name": "tvos update",
+					"type": "xml",
+					"urls": [
+						"/update/device",
+						"/update/app",
+						"/update/force/device",
+						"/update/force/app"
+					]
+				}	
+			]
+		},
+		{
+			"name": "Auxiliary",
+			"routes": [
+				{
+					"name": "top shelf",
+					"type": "xml",
+					"urls": ["/topShelf"]
+				},
+				{
+					"name": "tvos update",
+					"type": "xml",
+					"urls": [
+						"/update/device",
+						"/update/app",
+						"/update/force/device",
+						"/update/force/app"
+					]
+				},
+				{
+					"name": "app level error dialog",
+					"type": "xml",
+					"mvpd": true,
+					"urls": ["/error/noVideosInProgram"]
+				}		
+			]
 		}
 	]
 }
