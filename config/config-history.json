@@ -28,12 +28,6 @@
 					"type": "xml",
 					"mvpd": true,
 					"urls": ["/section/shows"]
-				},
-				{
-					"name": "movie page",
-					"type": "xml",
-					"mvpd": true,
-					"urls": ["/section/movies"]
 				}
 			]
 		},
