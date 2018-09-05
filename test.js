@@ -1,6 +1,7 @@
 // lib
 String.prototype.replaceAll = function(search, replacement) {
     var target = this;
+    if(!target) return target;
     return target.split(search).join(replacement);
 };
 // Modules
@@ -100,39 +101,53 @@ async function testEachTask(task) {
 
 		if(task.mvpd) {
 			mvpds.forEach(slashMvpd => {
-				url = slashMvpd;
-				prodUrl += slashMvpd;
+				let urlWithMvpd = url + slashMvpd,
+					prodUrlWithMvpd = prodUrl + slashMvpd;
 				
 				if(task.queryStr) {
 					task.queryStr.forEach(obj => {
 						for(let key in obj) {
-							if(url[url.length - 1] != "?") {
-								url += "&" + key + "=" + obj[key];
+							urlWithMvpd += "?";
+							if(urlWithMvpd[urlWithMvpd.length - 1] != "?") {
+								urlWithMvpd += "&" + key + "=" + obj[key];
 							} else {
-								url += "?" + key + "=" + obj[key];
+								urlWithMvpd += key + "=" + obj[key];
 							}
-						}
-						urls.push(url);
-						prodUrls.push(prodUrl);
+							prodUrlWithMvpd += "?";
+							if(prodUrlWithMvpd[prodUrlWithMvpd.length - 1] != "?") {
+								prodUrlWithMvpd += "&" + key + "=" + obj[key];
+							} else {
+								prodUrlWithMvpd += key + "=" + obj[key];
+							}
+						}						
 					});
+					urls.push(urlWithMvpd);
+					prodUrls.push(prodUrlWithMvpd);
 				} else {
-					urls.push(url);
-					prodUrls.push(prodUrl);
+					urls.push(urlWithMvpd);
+					prodUrls.push(prodUrlWithMvpd);
 				}
 			});
 		} else {
 			if(task.queryStr) {
 				task.queryStr.forEach(obj => {
 					for(let key in obj) {
+						url += "?";
 						if(url[url.length - 1] != "?") {
 							url += "&" + key + "=" + obj[key];
 						} else {
-							url += "?" + key + "=" + obj[key];
+							url += key + "=" + obj[key];
 						}
-					}
-					urls.push(url);
-					prodUrls.push(prodUrl);
+						prodUrl += "?";
+						if(prodUrl[prodUrl.length - 1] != "?") {
+							prodUrl += "&" + key + "=" + obj[key];
+						} else {
+							prodUrl += key + "=" + obj[key];
+						}
+					}					
 				});
+				urls.push(url);
+				prodUrls.push(prodUrl);
 			} else {
 				urls.push(url);
 				prodUrls.push(prodUrl);
