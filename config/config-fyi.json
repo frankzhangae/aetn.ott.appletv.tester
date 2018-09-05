@@ -6,7 +6,7 @@
 	],
 	"all-routes": [
 		{
-			"name": "Main Pages",
+			"name": "Main",
 			"routes": [
 				{
 					"name": "bag plist",
@@ -212,16 +212,6 @@
 			]
 		},
 		{
-			"name": "Show",
-			"routes": [
-				{
-					"name": "show landing page",
-					"type": "xml",
-					"urls": ["/topShelf"]
-				}
-			]
-		},
-		{
 			"name": "Auxiliary",
 			"routes": [
 				{
@@ -245,6 +235,63 @@
 					"mvpd": true,
 					"urls": ["/error/noVideosInProgram"]
 				}		
+			]
+		},
+		{
+			"name": "Show Level",
+			"routes": [
+				{
+					"name": "show landing page",
+					"type": "xml",
+					"mvpd": true,
+					"urls": []
+				},
+				{
+					"name": "season landing page",
+					"type": "xml",
+					"mvpd": true,
+					"urls": []
+				},
+				{
+					"name": "all seasons page",
+					"type": "xml",
+					"mvpd": true,
+					"urls": []
+				},
+				{
+					"name": "playlist page",
+					"type": "xml",
+					"mvpd": true,
+					"urls": []
+				}
+			]
+		},
+		{
+			"name": "Video Level",
+			"routes": [
+				{
+					"name": "video detail page (from show)",
+					"type": "xml",
+					"mvpd": true,
+					"urls": []
+				},
+				{
+					"name": "video detail page (from playlist)",
+					"type": "xml",
+					"mvpd": true,
+					"urls": []
+				},
+				{
+					"name": "video detail page",
+					"type": "xml",
+					"mvpd": true,
+					"urls": []
+				},
+				{
+					"name": "video feed json",
+					"type": "json",
+					"urls": []
+				}
 			]
 		}
 	]

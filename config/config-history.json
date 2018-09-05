@@ -6,7 +6,7 @@
 	],
 	"all-routes": [
 		{
-			"name": "Main Pages",
+			"name": "Main",
 			"routes": [
 				{
 					"name": "bag plist",
@@ -212,16 +212,6 @@
 			]
 		},
 		{
-			"name": "Show",
-			"routes": [
-				{
-					"name": "show landing page",
-					"type": "xml",
-					"urls": ["/topShelf"]
-				}
-			]
-		},
-		{
 			"name": "Auxiliary",
 			"routes": [
 				{
@@ -245,6 +235,84 @@
 					"mvpd": true,
 					"urls": ["/error/noVideosInProgram"]
 				}		
+			]
+		},
+		{
+			"name": "Show Level",
+			"routes": [
+				{
+					"name": "show landing page",
+					"type": "xml",
+					"mvpd": true,
+					"urls": [
+						"/show/SERIES3830/default",
+						"/show/Ancient Aliens/default",
+						"/show/SH019982290000/1-364837955584-unfinish"
+					]
+				},
+				{
+					"name": "season landing page",
+					"type": "xml",
+					"mvpd": true,
+					"urls": [
+						"/show/SERIES3830/season/1/OtherSeasons",
+						"/show/SH017080780000/season/1/OtherSeasons"
+					]
+				},
+				{
+					"name": "all seasons page",
+					"type": "xml",
+					"mvpd": true,
+					"urls": [
+						"/show/SERIES3830/all",
+						"/show/Forged in Fire/all"
+					]
+				},
+				{
+					"name": "playlist page",
+					"type": "xml",
+					"mvpd": true,
+					"urls": [
+						"/playlist/138602"
+					]
+				}
+			]
+		},
+		{
+			"name": "Video Level",
+			"routes": [
+				{
+					"name": "video detail page (from show)",
+					"type": "xml",
+					"mvpd": true,
+					"urls": [
+						"/show/SERIES4170/video/1180673603685"
+					]
+				},
+				{
+					"name": "video detail page (from playlist)",
+					"type": "xml",
+					"mvpd": true,
+					"urls": [
+						"/playlist/138602/video/474439747536"
+					]
+				},
+				{
+					"name": "video detail page",
+					"type": "xml",
+					"mvpd": true,
+					"urls": [
+						"/video/1195411523900"
+					]
+				},
+				{
+					"name": "video feed json",
+					"type": "json",
+					"urls": [
+						"/video/json/1206737987557",
+						"/video/json/480379971795/138602"
+					]
+				}
 			]
 		}
 	]

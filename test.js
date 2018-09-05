@@ -39,8 +39,8 @@ colors.setTheme({
 	const baseUrl = 'http://' + env + '-appletv.aetndigital.com/' + brand;
 	const prodBaseUrl = 'http://appletv.aetndigital.com/' + brand;
 
-	let config = require('./config/config-' + brand + '.json');
-	//let config = require('./config/config-test.json');
+	let config = require('./config/config-' + brand);
+	//let config = require('./config/config-test');
 
 	let allRoutes = config["all-routes"];
 	let mvpds = config.mvpd;
@@ -91,34 +91,66 @@ async function testEachCategory(category) {
 
 async function testEachTask(task) {
 	//console.log("testEachTask");
-
-	for(key in task.urls) {
-		let endpoint = task.urls[key];
+	let urls = [],
+		prodUrls = [];
+	// generate each url based on task's config and push to the urls array
+	task.urls.forEach(endpoint => {
+		let url = baseUrl + endpoint;
+		let prodUrl = prodBaseUrl + endpoint;
 
 		if(task.mvpd) {
-			for(mvpdKey in mvpds) {
-				let slashMvpd = mvpds[mvpdKey];
-
-				let result = await testEachEndPoint(task.type, baseUrl + endpoint + slashMvpd, prodBaseUrl + endpoint + slashMvpd);
-
-				if(result != 'pass') {
-					return "error";
+			mvpds.forEach(slashMvpd => {
+				url = slashMvpd;
+				prodUrl += slashMvpd;
+				
+				if(task.queryStr) {
+					task.queryStr.forEach(obj => {
+						for(let key in obj) {
+							if(url[url.length - 1] != "?") {
+								url += "&" + key + "=" + obj[key];
+							} else {
+								url += "?" + key + "=" + obj[key];
+							}
+						}
+						urls.push(url);
+						prodUrls.push(prodUrl);
+					});
+				} else {
+					urls.push(url);
+					prodUrls.push(prodUrl);
 				}
-			}
+			});
 		} else {
-			let result = await testEachEndPoint(task.type, baseUrl + endpoint, prodBaseUrl + endpoint);
-
-			if(result != 'pass') {
-				return "error";
-			}
+			if(task.queryStr) {
+				task.queryStr.forEach(obj => {
+					for(let key in obj) {
+						if(url[url.length - 1] != "?") {
+							url += "&" + key + "=" + obj[key];
+						} else {
+							url += "?" + key + "=" + obj[key];
+						}
+					}
+					urls.push(url);
+					prodUrls.push(prodUrl);
+				});
+			} else {
+				urls.push(url);
+				prodUrls.push(prodUrl);
+			}	
 		}
-	}
+	});
+	// test each url, return error if any of each failed
+	for(let i = 0; i < urls.length; i++) {
+		let result = await testEachEndPoint(task.type, urls[i], prodUrls[i]);
 
+		if(result != 'pass') return "error";
+	}
+	// return pass if everyone passed
 	return "pass";
 }
 
 function testEachEndPoint(resType, url1, url2) {
-	//console.log("testEachEndPoint");
+	//console.log("testEachEndPoint", url1, url2);
 
 	return new Promise((resolve, reject) => {
 		request(url1, (error, res, body) => {
