@@ -6,13 +6,16 @@
 	],
 	"all-routes": [
 		{
-			"name": "Main Pages",
+			"name": "Search",
 			"routes": [
 				{
-					"name": "bag plist",
+					"name": "search result: unlocked episodes",
 					"type": "xml",
 					"mvpd": false,
-					"urls": ["/bag.plist"]
+					"queryStr": [
+						{"searchTerm": "l"}
+					],
+					"urls": ["/search-results-free","/search-results"]
 				}
 			]
 		}

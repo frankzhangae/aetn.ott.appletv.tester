@@ -85,6 +85,7 @@ async function testEachCategory(category) {
 		let task = category.routes[key];
 
 		let result = await testEachTask(task);
+		//console.log(result);
 		// console status for each task result
 		console.log(colors[result](result), task.name);
 	}
@@ -92,7 +93,9 @@ async function testEachCategory(category) {
 
 async function testEachTask(task) {
 	//console.log("testEachTask");
-	let urls = [],
+
+	let promises = [],
+		urls = [],
 		prodUrls = [];
 	// generate each url based on task's config and push to the urls array
 	task.urls.forEach(endpoint => {
@@ -156,12 +159,15 @@ async function testEachTask(task) {
 	});
 	// test each url, return error if any of each failed
 	for(let i = 0; i < urls.length; i++) {
-		let result = await testEachEndPoint(task.type, urls[i], prodUrls[i]);
-
-		if(result != 'pass') return "error";
+		promises.push(testEachEndPoint(task.type, urls[i], prodUrls[i]));
 	}
-	// return pass if everyone passed
-	return "pass";
+	return await Promise.all(promises)
+		.then(results => {
+			return 'pass';
+		})
+		.catch(reason => {
+			return 'error';
+		})
 }
 
 function testEachEndPoint(resType, url1, url2) {
@@ -170,11 +176,11 @@ function testEachEndPoint(resType, url1, url2) {
 	return new Promise((resolve, reject) => {
 		request(url1, (error, res, body) => {
 			if(error || res.statusCode != 200) {
-				resolve("error");
+				reject("error");
 			} 
 			request(url2, (error2, res2, body2) => {
 				if(error2 || res2.statusCode != 200) {
-					resolve('error');
+					reject('error');
 				}
 				// deal with xml and make it the same as prod xml
 				body1 = body.replaceAll(env + '-', '').replaceAll('.' + env + '.', '').replaceAll('https', 'http');
@@ -186,7 +192,7 @@ function testEachEndPoint(resType, url1, url2) {
 				if(body1 == body2) {
 					resolve('pass');
 				}
-				resolve('error');
+				reject('error');
 			});
 		});
 	});
