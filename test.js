@@ -69,7 +69,7 @@ async function main() {
 async function testAllRoutes() {
 	//console.log("testAllRoutes");
 
-	for(key in allRoutes) {
+	for(let key in allRoutes) {
 		let category = allRoutes[key];
 		// console category
 		console.log("Category", colors.category(category.name));
@@ -81,11 +81,10 @@ async function testAllRoutes() {
 async function testEachCategory(category) {
 	//console.log("testEachCategory");
 
-	for(key in category.routes) {
+	for(let key in category.routes) {
 		let task = category.routes[key];
 
 		let result = await testEachTask(task);
-		//console.log(result);
 		// console status for each task result
 		console.log(colors[result](result), task.name);
 	}
@@ -159,40 +158,39 @@ async function testEachTask(task) {
 	});
 	// test each url, return error if any of each failed
 	for(let i = 0; i < urls.length; i++) {
-		promises.push(testEachEndPoint(task.type, urls[i], prodUrls[i]));
+		promises.push(testEachEndPoint(task, urls[i], prodUrls[i]));
 	}
 	return await Promise.all(promises)
 		.then(results => {
 			return 'pass';
 		})
-		.catch(reason => {
+		.catch(error => {
+			// deal with error
+			//console.log(error);
 			return 'error';
 		})
 }
 
-function testEachEndPoint(resType, url1, url2) {
+function testEachEndPoint(task, url1, url2) {
 	//console.log("testEachEndPoint", url1, url2);
 
 	return new Promise((resolve, reject) => {
 		request(url1, (error, res, body) => {
 			if(error || res.statusCode != 200) {
-				reject("error");
+				reject(url1 + " request fail");
 			} 
 			request(url2, (error2, res2, body2) => {
 				if(error2 || res2.statusCode != 200) {
-					reject('error');
+					reject(url2 + ' request fail');
 				}
 				// deal with xml and make it the same as prod xml
 				body1 = body.replaceAll(env + '-', '').replaceAll('.' + env + '.', '').replaceAll('https', 'http');
 				body2 = body2.replaceAll('.prod.', '').replaceAll('https', 'http');
 
-				//console.log(body1);
-				//console.log(body2);
-
 				if(body1 == body2) {
 					resolve('pass');
 				}
-				reject('error');
+				reject('not match');
 			});
 		});
 	});
