@@ -21,7 +21,7 @@ colors.setTheme({
 	pass: 'green',
 	warn: 'yellow',
 	debug: 'blue',
-	error: 'red'
+	fail: 'red'
 });
 /* 
  * main()
@@ -73,20 +73,8 @@ async function testAllRoutes() {
 		let category = allRoutes[key];
 		// console category
 		console.log("Category", colors.category(category.name));
-
-		await testEachCategory(category);
-	}
-}
- 
-async function testEachCategory(category) {
-	//console.log("testEachCategory");
-
-	for(let key in category.routes) {
-		let task = category.routes[key];
-
-		let result = await testEachTask(task);
-		// console status for each task result
-		console.log(colors[result](result), task.name);
+		// testEachCategory
+		await Promise.all(category.routes.map(testEachTask));
 	}
 }
 
@@ -161,13 +149,13 @@ async function testEachTask(task) {
 		promises.push(testEachEndPoint(task, urls[i], prodUrls[i]));
 	}
 	return await Promise.all(promises)
-		.then(results => {
-			return 'pass';
+		.then(() => {
+			console.log('pass'.pass, task.name);
 		})
-		.catch(error => {
+		.catch(errorMsg => {
+			console.log('fail'.fail, task.name);
 			// deal with error
-			//console.log(error);
-			return 'error';
+			console.log('reason:'.fail, errorMsg);
 		})
 }
 
@@ -188,9 +176,9 @@ function testEachEndPoint(task, url1, url2) {
 				body2 = body2.replaceAll('.prod.', '').replaceAll('https', 'http');
 
 				if(body1 == body2) {
-					resolve('pass');
+					resolve();
 				}
-				reject('not match');
+				reject('not match ' + url1 + ' ' + url2);
 			});
 		});
 	});

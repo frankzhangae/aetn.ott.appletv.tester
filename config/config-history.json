@@ -216,7 +216,7 @@
 			"routes": [
 				{
 					"name": "top shelf",
-					"type": "xml",
+					"type": "json",
 					"urls": ["/topShelf"]
 				},
 				{
